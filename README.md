@@ -1,4 +1,4 @@
-# 🌀 Docker + Traefik Example (Beginner Friendly)
+# 🌀 Docker + Traefik Example
 
 This project demonstrates how to use [Traefik](https://traefik.io/) as a reverse proxy with Docker Compose to route traffic to multiple services running on the same machine.
 
