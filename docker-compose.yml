@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    image: traefik:v3.3
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: traefik/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)"
+
+  blog:
+    image: nginx:alpine
+    volumes:
+      - ./blog-content:/usr/share/nginx/html:ro
+    labels:
+      - "traefik.http.routers.blog.rule=Host(`blog.localhost`)"
+  
+  app:
+    image: node:18-alpine
+    command: sh -c "echo '<h1>Hello from app.localhost</h1>' > index.html && npx http-server -p 3000"
+    working_dir: /app
+    labels:
+      - "traefik.http.routers.app.rule=Host(`app.localhost`)"
+      - "traefik.http.services.app.loadbalancer.server.port=3000"
